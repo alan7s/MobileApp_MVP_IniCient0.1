@@ -4,19 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fundoSecundario"
     tools:context=".ui.gallery.GalleryFragment">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="344dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/logo_cefet"
+        android:src="@drawable/logo_cefet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/detName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DET | Departamento de Engenharia de Transportes"
+        android:textColor="@color/fundoAppNeutro"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_gallery"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.615"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/text_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="32sp"
+        android:layout_marginEnd="32sp"
+        android:layout_marginTop="40sp"
+        android:autoLink="email"
+        android:gravity="center"
         android:textAlignment="center"
+        android:textColor="@color/cinzaPadrao"
+        android:textColorLink="@color/cinzaPadrao"
         android:textSize="20sp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.542" />
 </androidx.constraintlayout.widget.ConstraintLayout>
