@@ -132,7 +132,7 @@ public class HomeFragment extends Fragment {
                 //Log.d("DropboxUploader", String.valueOf(file.exists()));
                 uploadCSVFileToDropbox2(file);
             }
-        }, 0, 1 * 60 * 1000); // 5 minutos em milissegundos
+        }, 0, 1 * 60 * 1000); // 1 minutos em milissegundos
     }
 
     private void getUserAndroidID(){
