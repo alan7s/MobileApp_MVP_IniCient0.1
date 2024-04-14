@@ -6,54 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_home"
-        android:layout_width="200sp"
-        android:layout_height="24sp"
-        android:layout_marginStart="10sp"
-        android:layout_marginTop="34dp"
-        android:text="Localização Atual"
-        android:textAlignment="viewStart"
-        android:textColor="@color/fundoSecundario"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.131"
-        app:layout_constraintStart_toStartOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="33dp"
-        android:layout_height="24sp"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="36dp"
-        android:src="@drawable/maps"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/fundoSecundario" />
-
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="300sp"
-        android:layout_marginStart="30sp"
-        android:layout_marginTop="24sp"
-        android:layout_marginEnd="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_home"
-
-        />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/startLOG"
         app:layout_constraintTop_toBottomOf="@+id/map">
 
         <TableRow
@@ -64,15 +29,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="GPS Hora"
+                android:text="Horário:"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/timeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="304dp"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="dd-MMM-yyyy HH:mm:ss.SSS" />
+                android:text="obtendo data e hora..." />
         </TableRow>
 
         <TableRow android:layout_width="match_parent">
@@ -81,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Longitude"
+                android:text="Longitude:"
                 android:textStyle="bold" />
 
             <TextView
@@ -89,40 +54,98 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="0.0" />
+                android:text="obtendo longitude..." />
         </TableRow>
 
         <TableRow android:layout_height="match_parent">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Latitude"
+                android:text="Latitude:"
                 android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/latitudeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="0.0" />
+                android:text="obtendo latitude..." />
         </TableRow>
 
         <TableRow android:layout_height="match_parent">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Velocidade"
+                android:text="Velocidade:"
                 android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/speedTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="0 km/h" />
+                android:text="obtendo velocidade..." />
+        </TableRow>
+
+        <TableRow android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Android ID:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/telefoneTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="obtendo informações..." />
+        </TableRow>
+
+        <TableRow android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Upload:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/logfileTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Desativado" />
         </TableRow>
 
         <!-- Add more rows as needed -->
     </TableLayout>
+
+    <Button
+        android:id="@+id/startLOG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="INICIAR TRAJETO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/clearLOG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="LIMPAR TRAJETO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
