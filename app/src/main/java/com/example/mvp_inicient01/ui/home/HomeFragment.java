@@ -24,6 +24,8 @@ import androidx.fragment.app.Fragment;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.WriteMode;
+import com.dropbox.core.oauth.DbxCredential;
+
 import com.example.mvp_inicient01.R;
 import com.example.mvp_inicient01.databinding.FragmentHomeBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -63,7 +65,10 @@ public class HomeFragment extends Fragment {
     private String userID;
 
 
-    private static final String ACCESS_TOKEN = "DROPBOX_TOKEN"; //dropbox api key
+    private static String ACCESS_TOKEN = "YOUR_APP_TOKEN";
+    private static final String REFRESH_TOKEN = "YOUR_REFRESH_TOKEN";
+    private static final String CLIENT_ID = "YOUR_APP_KEY";
+    private static final String CLIENT_SECRET = "YOUR_APP_SECRET";
 
     private Timer uploadTimer;
 
@@ -113,6 +118,7 @@ public class HomeFragment extends Fragment {
         clearLOGButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File file = new File(requireActivity().getApplicationContext().getFilesDir(), userID + ".csv");
                 deleteCSVFile(userID + ".csv");
             }
         });
@@ -139,8 +145,6 @@ public class HomeFragment extends Fragment {
         userID = Settings.Secure.getString(requireActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         TextView userPhoneNumber = binding.telefoneTextView;
         userPhoneNumber.setText(userID);
-        //Toast.makeText(getActivity().getApplicationContext(), "userID = " + userID, Toast.LENGTH_LONG).show();
-        //Log.d("teste", userID);
     }
     private void requestLocationPermission() {
         Dexter.withContext(getActivity().getApplicationContext())
@@ -198,7 +202,6 @@ public class HomeFragment extends Fragment {
                 String csvContent = gpsTime + "," + longitude + "," + latitude + "," + speed + "\n";
                 writer.write(csvContent.getBytes());
                 writer.close();
-                //Toast.makeText(getActivity().getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,23 +270,20 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
     public void uploadCSVFileToDropbox2(File file) {
         // Configurações do cliente do Dropbox
-        DbxRequestConfig config = DbxRequestConfig.newBuilder("TesteUploadCEFET").build();
-        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
-        TextView logfileTextView = getView().findViewById(R.id.logfileTextView);
         try {
+            DbxCredential credential = new DbxCredential(ACCESS_TOKEN, -1L, REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET);
+            Log.d("DropboxUploader", "CODE:" + credential.getAccessToken());
+            DbxRequestConfig config = DbxRequestConfig.newBuilder("CEFET APP CSV").build();
+            DbxClientV2 client = new DbxClientV2(config, credential);
+
             InputStream inputStream = new FileInputStream(file);
             client.files().uploadBuilder("/" + file.getName())
                 .withMode(WriteMode.OVERWRITE)
                 .uploadAndFinish(inputStream);
-            String logfileText = "Ativo";
-            logfileTextView.setText(logfileText);
             Log.d("DropboxUploader", "Arquivo enviado com sucesso para o Dropbox!");
         } catch (Exception e) {
-            String logfileText = "Pendente";
-            logfileTextView.setText(logfileText);
             e.printStackTrace();
             Log.e("DropboxUploader", "Erro ao enviar arquivo para o Dropbox: " + e);
         }
