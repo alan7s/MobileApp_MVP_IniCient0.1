@@ -21,7 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxHost;
 import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.oauth.DbxRefreshResult;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.WriteMode;
 import com.dropbox.core.oauth.DbxCredential;
@@ -51,6 +54,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -65,10 +69,10 @@ public class HomeFragment extends Fragment {
     private String userID;
 
 
-    private static String ACCESS_TOKEN = "YOUR_APP_TOKEN";
-    private static final String REFRESH_TOKEN = "YOUR_REFRESH_TOKEN";
-    private static final String CLIENT_ID = "YOUR_APP_KEY";
-    private static final String CLIENT_SECRET = "YOUR_APP_SECRET";
+    private static String ACCESS_TOKEN = ""; //dropbox api key
+    private static final String REFRESH_TOKEN = "";
+    private static final String CLIENT_ID = "";
+    private static final String CLIENT_SECRET = "";
 
     private Timer uploadTimer;
 
@@ -136,7 +140,11 @@ public class HomeFragment extends Fragment {
                 // Chamada para o método de upload
                 File file = new File(requireActivity().getApplicationContext().getFilesDir(), userID + ".csv");
                 //Log.d("DropboxUploader", String.valueOf(file.exists()));
-                uploadCSVFileToDropbox2(file);
+                try {
+                    uploadCSVFileToDropbox2(file);
+                } catch (DbxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }, 0, 1 * 60 * 1000); // 1 minutos em milissegundos
     }
@@ -242,16 +250,16 @@ public class HomeFragment extends Fragment {
         double latitude = location.getLatitude();
         DecimalFormat df = new DecimalFormat("#.########");
 
-        String speedText = kmphSpeed + " km/h";
-        String longitudeText = df.format(longitude);
-        String latitudeText = df.format(latitude);
+        String speedText = String.format(Locale.US, "%.0f", kmphSpeed) + " km/h";
+        String longitudeText = String.format(Locale.US, "%.8f", longitude);// df.format(longitude);
+        String latitudeText = String.format(Locale.US, "%.8f", latitude);//df.format(latitude);
 
         speedTextView.setText(speedText);
         timeTextView.setText(gpsTime);
         longitudeTextView.setText(longitudeText);
         latitudeTextView.setText(latitudeText);
 
-        writeToCSV(userID + ".csv",gpsTime,Double.toString(kmphSpeed),longitudeText,latitudeText, startLogging);
+        writeToCSV(userID + ".csv",gpsTime,String.format(Locale.US, "%.3f", kmphSpeed),longitudeText,latitudeText, startLogging);
     }
     private void updateMapLocation(Location location) {
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -270,23 +278,36 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    public void uploadCSVFileToDropbox2(File file) {
+    public void uploadCSVFileToDropbox2(File file) throws DbxException {
         // Configurações do cliente do Dropbox
+        TextView uploadText = binding.logfileTextView;
         try {
+            DbxRequestConfig config = DbxRequestConfig.newBuilder("CEFET APP CSV").build();
             DbxCredential credential = new DbxCredential(ACCESS_TOKEN, -1L, REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET);
             Log.d("DropboxUploader", "CODE:" + credential.getAccessToken());
-            DbxRequestConfig config = DbxRequestConfig.newBuilder("CEFET APP CSV").build();
+
             DbxClientV2 client = new DbxClientV2(config, credential);
 
             InputStream inputStream = new FileInputStream(file);
             client.files().uploadBuilder("/" + file.getName())
-                .withMode(WriteMode.OVERWRITE)
-                .uploadAndFinish(inputStream);
+                    .withMode(WriteMode.OVERWRITE)
+                    .uploadAndFinish(inputStream);
+            uploadText.setText("Online");
             Log.d("DropboxUploader", "Arquivo enviado com sucesso para o Dropbox!");
         } catch (Exception e) {
+            uploadText.setText("Conectando...");
+            ACCESS_TOKEN=updateDropboxAccessToken();
             e.printStackTrace();
             Log.e("DropboxUploader", "Erro ao enviar arquivo para o Dropbox: " + e);
         }
+    }
+
+    public String updateDropboxAccessToken() throws DbxException {
+        DbxRequestConfig config = DbxRequestConfig.newBuilder("CEFET APP CSV").build();
+        DbxCredential credential = new DbxCredential(ACCESS_TOKEN, -1L, REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET);
+        DbxRefreshResult refreshResult = credential.refresh(config, DbxHost.DEFAULT, null);
+        credential = new DbxCredential(refreshResult.getAccessToken(), refreshResult.getExpiresAt(), REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET);
+        return credential.getAccessToken();
     }
 
     @Override
